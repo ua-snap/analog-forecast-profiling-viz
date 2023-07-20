@@ -22,20 +22,21 @@ forecast_domains_rb = widgets.RadioButtons(
     options=["alaska", "northern_hs", "north_pacific", "panarctic"], 
     description="Forecast domain"
 )
+ref_date_dd = widgets.RadioButtons(
+    options=analog_df.reference_date.unique(),
+    value=analog_df.reference_date.unique()[0],
+    description="Reference\ndate",
+    disabled=False,
+)
 
 controls = widgets.HBox([
     varnames_rb, 
     search_domains_rb, 
-    forecast_domains_rb
+    forecast_domains_rb,
+    ref_date_dd
 ])
 
 
-# @widgets.interact(
-#     varname=varnames_rb, 
-#     search_domain=search_domains_rb, 
-#     forecast_domain=forecast_domains_rb,
-#     ref_date=analog_df.reference_date.unique(),
-# )
 def plot_error(varname, search_domain, forecast_domain, ref_date):
     fig, ax = plt.subplots(1, 1, figsize=(9, 5))
     query_str = (
@@ -72,14 +73,8 @@ def plot_error(varname, search_domain, forecast_domain, ref_date):
     plot_df.plot(title=f"{varname},  search={search_domain}, forecast={forecast_domain},  Reference Date: {ref_date}", ax=ax)
     ax.set_ylabel("RMSE")
     
-#     plt.show()
-    
     return
 
 
-# output = widgets.Output()
-# app = widgets.HBox([controls, output])
-
-
-widget = widgets.interactive(plot_error, varname=varnames_rb, search_domain=search_domains_rb, forecast_domain=forecast_domains_rb, ref_date=analog_df.reference_date.unique())
+widget = widgets.interactive(plot_error, varname=varnames_rb, search_domain=search_domains_rb, forecast_domain=forecast_domains_rb, ref_date=ref_date_dd)
 output = widget.children[-1]
